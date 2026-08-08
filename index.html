@@ -232,6 +232,18 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+
+document.addEventListener('keydown', function(e){
+  if (document.activeElement === document.getElementById('answer')) return;
+  if (e.code === 'Space') {
+    const nextBtn=document.getElementById('nextBtn');
+    if (nextBtn && nextBtn.style.display !== 'none') {
+      e.preventDefault();
+      showNext();
+    }
+  }
+});
+
 makeDeck();
 showNext();
 </script>
