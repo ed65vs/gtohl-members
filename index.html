@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -217,6 +218,17 @@ document.getElementById('answer').addEventListener('keydown',e=>{
   if(e.key==='Enter'){
     e.preventDefault();
     grade();
+  }
+});
+
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn.style.display !== 'none') {
+      e.preventDefault();
+      showNext();
+    }
   }
 });
 
