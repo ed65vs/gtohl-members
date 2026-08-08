@@ -108,7 +108,7 @@ button{
 <button id="checkBtn" type="button">CHECK ANSWER</button>
 <button id="nextBtn" type="button">NEXT PLAYER</button>
 
-<div class="note">Desktop: Enter = check, Space = next. iPhone/iPad: use CHECK ANSWER and NEXT PLAYER.</div>
+<div class="note">Desktop: Enter = check answer. Spacebar = next player. iPhone/iPad: use the buttons.</div>
 <button id="restart" type="button">Restart / reshuffle</button>
 </main>
 
@@ -178,7 +178,7 @@ function showNext(){
   document.getElementById('nextBtn').style.display='none';
 
   // Do not force keyboard open on page load; after advancing by tap, focusing works.
-  setTimeout(()=>ans.focus(),80);
+  setTimeout(()=>{ ans.focus(); ans.select(); },80);
 }
 
 function normalize(s){
@@ -220,12 +220,6 @@ document.getElementById('restart').addEventListener('click',()=>{
 });
 
 // If iPhone happens to provide Return/Done, let it work too.
-document.getElementById('answer').addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    if (!locked) grade();
-  }
-});
 
 
 
@@ -234,14 +228,31 @@ document.getElementById('answer').addEventListener('keydown', e => {
 
 
 
-document.addEventListener('keydown', e => {
-  if (e.code !== 'Space') return;
+
+
+
+
+window.addEventListener('keydown', function(e) {
+  const ans = document.getElementById('answer');
   const nextBtn = document.getElementById('nextBtn');
-  if (nextBtn && nextBtn.style.display !== 'none') {
-    e.preventDefault();
-    showNext();
+
+  if (e.key === 'Enter') {
+    if (!locked) {
+      e.preventDefault();
+      grade();
+    }
+    return;
   }
-});
+
+  if (e.code === 'Space' || e.key === ' ') {
+    const showingAnswer = nextBtn && getComputedStyle(nextBtn).display !== 'none';
+    if (showingAnswer) {
+      e.preventDefault();
+      e.stopPropagation();
+      showNext();
+    }
+  }
+}, true);
 
 makeDeck();
 showNext();
