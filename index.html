@@ -40,6 +40,7 @@ h1{
   margin-bottom:10px;
 }
 #face{
+  transition:opacity .15s ease;
   width:min(70vw,320px);
   aspect-ratio:1/1;
   margin:0 auto 10px;
@@ -71,6 +72,7 @@ label{
   font-weight:700;
 }
 .good{color:var(--good)}
+#feedback{transition:opacity .15s ease;}
 .bad{color:var(--bad)}
 button{
   width:100%;
@@ -90,6 +92,7 @@ button{
 <body>
 <main>
 <h1>GTOHL Members</h1>
+<div style="font-size:13px;color:#888;margin-top:-6px;margin-bottom:8px;">Face Quiz v2</div>
 <div class="top">
   <div id="score">Score 0 / 0</div>
   <div id="seen">Player 1</div>
@@ -105,7 +108,7 @@ button{
 <button id="checkBtn" type="button">CHECK ANSWER</button>
 <button id="nextBtn" type="button">NEXT PLAYER</button>
 
-<div class="note">Type a first name, tap CHECK ANSWER, then tap NEXT PLAYER.</div>
+<div class="note">Desktop: Enter = check, Space = next. iPhone/iPad: use CHECK ANSWER and NEXT PLAYER.</div>
 <button id="restart" type="button">Restart / reshuffle</button>
 </main>
 
@@ -157,7 +160,9 @@ function showNext(){
   current=candidate;
   lastName=current.name;
   locked=false;
-  setSprite(current);
+  const face = document.getElementById('face');
+  face.style.opacity='0';
+  setTimeout(()=>{ setSprite(current); face.style.opacity='1'; }, 80);
 
   const ans=document.getElementById('answer');
   ans.disabled=false;
@@ -167,7 +172,8 @@ function showNext(){
   fb.textContent='';
   fb.className='';
 
-  document.getElementById('seen').textContent=`Player ${total+1}`;
+  const roundPos = (total % cards.length) + 1;
+  document.getElementById('seen').textContent=`Player ${roundPos} / ${cards.length}`;
   document.getElementById('checkBtn').style.display='block';
   document.getElementById('nextBtn').style.display='none';
 
@@ -214,33 +220,26 @@ document.getElementById('restart').addEventListener('click',()=>{
 });
 
 // If iPhone happens to provide Return/Done, let it work too.
-document.getElementById('answer').addEventListener('keydown',e=>{
-  if(e.key==='Enter'){
+document.getElementById('answer').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
     e.preventDefault();
-    grade();
+    if (!locked) grade();
   }
 });
 
 
-document.addEventListener('keydown', (e) => {
-  if (e.code === 'Space') {
-    const nextBtn = document.getElementById('nextBtn');
-    if (nextBtn.style.display !== 'none') {
-      e.preventDefault();
-      showNext();
-    }
-  }
-});
 
 
-document.addEventListener('keydown', function(e){
-  if (document.activeElement === document.getElementById('answer')) return;
-  if (e.code === 'Space') {
-    const nextBtn=document.getElementById('nextBtn');
-    if (nextBtn && nextBtn.style.display !== 'none') {
-      e.preventDefault();
-      showNext();
-    }
+
+
+
+
+document.addEventListener('keydown', e => {
+  if (e.code !== 'Space') return;
+  const nextBtn = document.getElementById('nextBtn');
+  if (nextBtn && nextBtn.style.display !== 'none') {
+    e.preventDefault();
+    showNext();
   }
 });
 
